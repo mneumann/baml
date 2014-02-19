@@ -1,6 +1,6 @@
-# Batl
+# Baml
 
-A _balanced_, whitespace-insensitive _templating_ _language_ for HTML inspired by [Slim] and [Haml].
+A _balanced_, whitespace-insensitive _markup_ _language_ for HTML templating inspired by [Slim] and [Haml].
 
 ## Advantages
 
@@ -10,7 +10,7 @@ A _balanced_, whitespace-insensitive _templating_ _language_ for HTML inspired b
 
 ## Examples
 
-This [Batl] code below:
+This [Baml] code below:
 
 ```
 section.container {
@@ -125,9 +125,7 @@ attribute ::= attrname ["=" expr]
 
 ## Open questions
 
-* Is Baml a better name?
-
-[Batl]: https://github.com/mneumann/batl
+[Baml]: https://github.com/mneumann/batl
 [Slim]: http://slim-lang.com/
 [Haml]: http://haml.info/
 [Erb]: http://ruby-doc.org/stdlib-2.1.0/libdoc/erb/rdoc/ERB.html
