@@ -58,7 +58,7 @@ or this is [Erb]:
 doctype html
 html {
   head {
-    title "Batl Examples";
+    title "Baml Examples";
     meta name="keywords" content="template language"
     meta name="author" content=${ author }
   }
@@ -67,7 +67,7 @@ html {
     
     #content {
       p {
-        | This example shows you how a basic Batl
+        | This example shows you how a basic Baml
         | templating file looks like.
       }
     }
@@ -105,7 +105,7 @@ html {
 
 ## Grammar
 
-This is the basic grammar of a Batl document:
+This is the basic grammar of a Baml document:
 
 
 ```ebnf
