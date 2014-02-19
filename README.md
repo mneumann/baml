@@ -123,6 +123,10 @@ etag ::= "}"
 attribute ::= attrname ["=" expr]
 ```
 
+## Open questions
+
+* Is Baml a better name?
+
 [Batl]: https://github.com/mneumann/batl
 [Slim]: http://slim-lang.com/
 [Haml]: http://haml.info/
