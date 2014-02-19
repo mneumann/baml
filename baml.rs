@@ -4,6 +4,10 @@
 // Copyright (c) 2014 by Michael Neumann (mneumann@ntecs.de)
 //
 
+use chars2::{TChars2};
+
+mod chars2;
+
 static baml: &'static str = r###"
 html {
   head {
@@ -15,17 +19,15 @@ html {
 }
 "###;
 
-// use an iterator instead?
-
 fn skip_whitespace<'a>(str: &'a str) -> &'a str {
-  let mut cnt = 0;
-  for ch in str.chars() {
+  let mut iter = str.chars2();
+  for ch in iter {
     match ch {
-      ' ' | '\t' | '\r' | '\n' => { cnt += 1; }
+      ' ' | '\t' | '\r' | '\n' => { }
       _ => break
     }
   }
-  str.slice_from(cnt)
+  iter.remaining()
 }
 
 fn parse_element(str: &str) {

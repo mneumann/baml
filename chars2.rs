@@ -12,10 +12,10 @@ pub struct Chars2<'a> {
 
 
 impl<'a> Chars2<'a> {
-  fn remaining(&self) -> &'a str { self.string }
+  pub fn remaining(&self) -> &'a str { self.string }
 }
 
-trait TChars2<'a> {
+pub trait TChars2<'a> {
   fn chars2(&self) -> Chars2<'a>;
 }
 
