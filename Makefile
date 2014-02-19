@@ -1,2 +1,3 @@
-baml: baml.rs chars2.rs
-	rustc baml.rs
+baml: baml.rs
+	rustc --test baml.rs
+	./baml
