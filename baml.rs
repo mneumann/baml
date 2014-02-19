@@ -19,39 +19,6 @@ html {
 }
 "###);
 
-//fn skip_whitespace<'a>(str: &'a str) -> &'a str {
-//  str.trim_left_chars(& &[' ', '\t', '\r', '\n'])
-//}
-
-/*fn skip_comment<'a>(str: &'a str) -> &'a str {
-  if str.starts_with("//") {
-    // str.trim_left_chars(&|c: char| 
-    // consume whole line
-    str.find('\n') 
-  }
-}
-*/
-
-/*
-fn parse_element(str: &str) {
-    // let mut str = skip_whitespace(str);
-    let mut iter = str.chars2();
-
-    loop {
-        match iter.next() {
-            Some(c) => {
-                match c {
-                    ' ' | '\n' => {}
-                    'a' .. 'z' => {
-                    } 
-                }
-            }
-            None => break
-        }
-    }
-}
-*/
-
 #[deriving(Show,Eq)]
 enum Document<'a> {
   //SingleTag(MaybeOwned<'a>)
@@ -69,6 +36,15 @@ fn is_alnum(ch: u8) -> bool {
   if is_alpha(ch) { return true }
   return false;
 }
+
+/*
+fn is_space(ch: u8) -> bool {
+  if ch == (' ' as u8) || ch == ('\t' as u8) || ch == ( 
+  if ch >= ('A' as u8) && ch <= ('Z' as u8) { return true }
+  return false;
+}
+*/
+
 
 struct SliceReader<'a> {
   data: &'a[u8]
@@ -125,26 +101,16 @@ impl<'a> SliceReader<'a> {
   }
 }
 
-/*
-fn parse_element<'a>(buf: &'a [u8]) -> Result<Document<'a>, ()> {
-  let ch = buf[0];
-
-  if is_alpha(ch) {
-    let beg = 0;
-    let mut end = beg+1;
-    while end < buf.len() {
-      if is_alnum(buf[end]) { end += 1; }
-      else { break }
-    }
-    Ok(SingleTag(from_utf8(buf.slice(beg, end)).unwrap()))
-  }
-  else {
-    fail!()
-  }
+// skips whitespace including newlines
+fn skip_whitespace<'a>(rd: &'a mut SliceReader) {
+  let _ = rd.pop_front_while(|c| 
+    c == (' ' as u8) || c == ('\t' as u8) || c == ('\r' as u8) || c == ('\n' as u8)
+  );
 }
-*/
 
 fn parse_element<'a>(rd: &'a mut SliceReader) -> Result<Document<'a>, ()> {
+  skip_whitespace(rd);
+
   let ch = rd.head();
   if ch.is_none() { return Err(()); }
 
@@ -159,7 +125,7 @@ fn parse_element<'a>(rd: &'a mut SliceReader) -> Result<Document<'a>, ()> {
 
 #[test]
 fn test_single_tag() {
-  let str = bytes!("html");
+  let str = bytes!(" html");
   let mut rd = SliceReader::new(str);
 
   assert_eq!(parse_element(&mut rd), Ok(SingleTag("html")));
