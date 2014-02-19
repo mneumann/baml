@@ -71,21 +71,28 @@ html {
       }
     }
     
-    % yield(self)
+    // `!` is a non-nesting code line
+    ! yield(self)
+
+    // while `%` introduces a block which has to be
+    // terminated by `}` w/o leading `%`. This makes
+    // it beautifully line up with in-place HTML.
+    // The last character of a `%` line must be a
+    // `{`
     
     % if items.len() > 0 {
-        table {
-          % for item in items.iter() {
-              tr {
-                td.name =  ${ item.name }
-                td.price = ${ item.price }
-              }
-          % }
+      table {
+        % for item in items.iter() {
+          tr {
+              td.name =  ${ item.name }
+              td.price = ${ item.price }
+          }
         }
-    % }
+      }
+    }
     % else {
-        p "No items found. Please add some inventory. Thank you!"
-    % }
+      p "No items found. Please add some inventory. Thank you!"
+    }
     
     div id="footer" {
       ${ render("footer") }
