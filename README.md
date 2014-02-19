@@ -7,6 +7,7 @@ A _balanced_, whitespace-insensitive _markup_ _language_ for HTML-templating ins
 * Whitespace insensitive!!!
 * Compact
 * Editor friendly: Can simply jump to the end of a block.
+* Safe
 
 ## Examples
 
