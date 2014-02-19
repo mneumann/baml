@@ -1,6 +1,6 @@
 # Baml
 
-A _balanced_, whitespace-insensitive _markup_ _language_ for HTML templating inspired by [Slim] and [Haml].
+A _balanced_, whitespace-insensitive _markup_ _language_ for HTML-templating inspired by [Slim] and [Haml].
 
 ## Advantages
 
