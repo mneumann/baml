@@ -82,7 +82,7 @@ html {
     
     % if items.len() > 0 {
       table {
-        % for item in items.iter() {
+        % for &item in items.iter() {
           tr {
               td.name =  ${ item.name }
               td.price = ${ item.price }
@@ -100,6 +100,27 @@ html {
     }
   }
 }
+```
+
+## Grammar
+
+This is the basic grammar of a Batl document:
+
+
+```ebnf
+
+stmtend ::= NL | ";"
+
+expr ::= string | "${" code "}"
+
+idname   ::= ("a" .. "z" | "A" .. "Z") ("a" .. "z" | "A" .. "Z" | "-")*
+tagname  ::= id
+attrname ::= id
+
+tag ::= tagname [attribute]* ([expr] stmtend | "{")
+etag ::= "}"
+
+attribute ::= attrname ["=" expr]
 ```
 
 [Batl]: https://github.com/mneumann/batl
