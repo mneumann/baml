@@ -279,6 +279,65 @@ Newlines are no whitespaces. In some parts they are significant.
   start at the beginning of the line and extends till the end of the line, expressions are expanded.
 * HTML comments: Use <code>\\</code>, expands till the end of the line.
 
+## Open Questions
+
+### Multi-line strings
+
+Remove <code>|</code> in favour of a more general multi line string literal. <code>|</code> is bad, because it doesn't 
+let you group text as a unit and operate with filters on the group of text. Instead introduce 
+<code>~{ multiline }</code>, which also allows a terminator to be specified:
+
+```
+div ~{
+  This is a paragraph of text
+}
+
+div ~###{
+  This is a paragraph of text containing a }
+  which does not end the string!
+}###
+
+div ~!{
+  Interpolation is ${ performed }
+}
+```
+
+Parsing of those strings is pretty easy. By default, interpolation of <code>${...}</code> expressions within these
+strings is not performed, but this can be changed with the <code>!</code> modifier. Note that it is not used as terminator after the closing <code>}</code>.
+
+### Filters
+
+This can be used to correctly escape Javascript code:
+
+```
+@javascript "if (this.value > 2)"
+```
+
+This will correctly escape the <code>&gt;</code> and generate <code>if (this.value &amp;gt; 2)</code>.
+
+Depending on the context this will also generate the surround <code>&lt;script&gt;</code> tags.
+
+For multiline javascript:
+
+```
+@javascript ~{
+  function some() {
+    return "Hallo";
+  }
+}
+```
+
+There can be only one filter coming before an expression. Note that the filter might modify the interpolation method used within the following string:
+
+```
+:myvalue: &str
+div onclick=@javascript "alert(${ myvalue })"
+div id="${ myvalue }"
+```
+
+The first will interpolate <code>myvalue</code> as a Javascript string while the second will 
+interpolate it as a HTML attribute (without the surrounding <code>"..."</code>).
+
 ## Grammar
 
 This is the basic grammar of a Baml document (incomplete):
