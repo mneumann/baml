@@ -390,6 +390,40 @@ In Ruby, this would make it possible to inject either a single attribute or mult
 myattributes = {:id => "abc", :class => "css"}
 ```
 
+### Macros
+
+Including other baml files into the current:
+
+```
+@include('test.baml')
+```
+
+Note that here the string MUST NOT contain interpolation expressions, as interpolation is done at run-time,
+while @include is evaluated at compile time.
+
+If we extend the <code>@filter</code> syntax for arguments like in <code>@pygments(ruby)</code>, we
+can also introduce macros in the language:
+
+```
+@macro(FOOTER, name, year) {
+  div#footer {
+    "Copyright (c) " @expand(year) " by " @expand(name) 
+}
+
+html {
+  body {
+    @expand(FOOTER, "Michael Neumann", "2014")
+  }
+}
+
+```
+
+We would need to make filters aware of tags, i.e. the HTML nodes <code>{ ... }</code> would be passed to
+the macro filter. And also we'd have to allow filters to use arguments optionally.
+Also macros would need to be allowed to come at the beginning of a statement.
+
+This would make for nice code blocks are reusable template code (independent of the language; Ruby or Rust).
+
 ## Grammar
 
 This is the basic grammar of a Baml document (incomplete):
