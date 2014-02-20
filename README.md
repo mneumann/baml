@@ -4,10 +4,20 @@ A _balanced_, whitespace-insensitive _markup_ _language_ for HTML-templating ins
 
 ## Advantages
 
-* Whitespace insensitive!!!
-* Compact
+* Whitespace _insensitive_!!!
+* Compact markup.
+* Safe: Context-sensitive escaping and interpolation.
 * Editor friendly: Can simply jump to the end of a block.
-* Safe
+
+### Whitespace insensitive
+
+How can Ruby programmers use whitespace sensitive markup??? :)
+
+### Editor friendly
+
+Without special syntax support, to jump to the end of a tag or expression, position
+your cursor on the <code>{</code>-character and press <code>%</code> in <code>vim</code>.
+Code folding should work seamlessly as well (haven't tried).
 
 ## Examples
 
@@ -337,6 +347,48 @@ div id="${ myvalue }"
 
 The first will interpolate <code>myvalue</code> as a Javascript string while the second will 
 interpolate it as a HTML attribute (without the surrounding <code>"..."</code>).
+
+### HTML attributes
+
+HTML allows something like:
+```html
+<div id="id" disabled />
+```
+
+I support this in Baml:
+
+```
+div id="id" disabled
+```
+
+But I might want to change it towards always using the <code>attr = value</code> notation,
+plus a special <code>_</code> value which means "ignore":
+
+```
+div id="id" disabled=_
+```
+
+This doesn't look as nice, but is more regular. The question is how frequent those attributes are.
+This is required to allow expressions for attribute names:
+
+```
+div ${myattr}="abc"
+```
+
+which is currently not supported, as a string or expression is always treated as the (inline) body of a tag (and as
+such ends the tag).
+
+Including multiple attributes into a tag is not (yet) supported. But I could think of something like:
+
+```
+div *${myattributes}
+```
+
+In Ruby, this would make it possible to inject either a single attribute or multiple attributes:
+
+```ruby
+myattributes = {:id => "abc", :class => "css"}
+```
 
 ## Grammar
 
