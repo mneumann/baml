@@ -281,9 +281,6 @@ Newlines are no whitespaces. In some parts they are significant.
 
 ## Grammar
 
-
-## Grammar
-
 This is the basic grammar of a Baml document (incomplete):
 
 
