@@ -35,6 +35,8 @@ def lexer(doc)
         case ch
         when '"'
           break
+        when "\n"
+          raise "Multi-line string not allowed"
         else
           str << ch
         end
@@ -50,6 +52,8 @@ def lexer(doc)
         case ch
         when "'"
           break
+        when "\n"
+          raise "Multi-line string not allowed"
         else
           str << ch
         end
