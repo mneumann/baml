@@ -401,13 +401,14 @@ Including other baml files into the current:
 Note that here the string MUST NOT contain interpolation expressions, as interpolation is done at run-time,
 while @include is evaluated at compile time.
 
-If we extend the <code>@filter</code> syntax for arguments like in <code>@pygments(ruby)</code>, we
+If we extend the <code>@filter</code> syntax for arguments like in <code>@pygments(ruby)</code> then we
 can also introduce macros in the language:
 
 ```
 @macro(FOOTER, name, year) {
   div#footer {
-    "Copyright (c) " @expand(year) " by " @expand(name) 
+    "Copyright (c) " @expand(year) " by " @expand(name)
+  }
 }
 
 html {
@@ -422,7 +423,18 @@ We would need to make filters aware of tags, i.e. the HTML nodes <code>{ ... }</
 the macro filter. And also we'd have to allow filters to use arguments optionally.
 Also macros would need to be allowed to come at the beginning of a statement.
 
-This would make for nice code blocks are reusable template code (independent of the language; Ruby or Rust).
+The macro definitions would be local to the current node, i.e. local macros can be defined, local to all sub nodes.
+
+This would make for nice code blocks are reusable template code (independent of the language; Ruby or Rust). I now
+think we *DEFINITIVLY* need to include this in Baml!
+
+Macros can also be defined for texts, i.e. exapand to any node or expression.
+
+```
+@macro(AUTHOR) "Michael Neumann"
+
+@macro(PAGE_TITLE) "Title: ${ page.title }"
+```
 
 ## Grammar
 
