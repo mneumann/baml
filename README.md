@@ -116,7 +116,7 @@ div id='${ not interpolated }'
 And interpolated attribute values:
 
 ```
-div id='item${ item.id }' 
+div id="item${ item.id }"
 ```
 
 Of course this can be used in the same way for text:
