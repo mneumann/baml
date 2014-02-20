@@ -35,6 +35,11 @@ def lexer(doc)
         case ch
         when '"'
           break
+        when "\\"
+          if iter.next != '"'
+            raise 'Only escaping of " allowed'
+          end
+          str << '"'
         when "\n"
           raise "Multi-line string not allowed"
         else
@@ -52,6 +57,11 @@ def lexer(doc)
         case ch
         when "'"
           break
+        when "\\"
+          if iter.next != "'"
+            raise "Only escaping of ' allowed"
+          end
+          str << "'"
         when "\n"
           raise "Multi-line string not allowed"
         else
