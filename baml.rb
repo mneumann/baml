@@ -143,48 +143,6 @@ def lexer(doc)
   end
 end
 
-def parse_statement(line)
-  line.strip! # leading and trailing whitespaces
-
-  return nil if line.empty?
-
-  case line
-  when /^([a-zA-Z][0-9a-zA-Z-]*)/
-    tag, rem = $1, $' 
-    rem.strip!
-    case rem
-    when /^["]([^"]*)["]/
-      str, rem = $1, $'
-      rem.strip!
-
-      case rem
-      when /^\/\//
-        # comment
-        rem = ""
-        
-      when /^;/
-        # end statement
-        rem = $' 
-      else
-        raise unless rem.empty?
-      end
-
-      return :tag, {:tag => tag, :body => str}, rem
-
-    when /^[{]/
-      rem = $'
-      return :otag, {:tag => tag}, rem
-    else
-      raise "#{line}, #{rem}"
-    end
-  when /^[}]/
-    rem = $'
-    return :etag, {}, rem
-  else
-    raise
-  end
-end
-
 $tag_stack = []
 
 def indent
@@ -221,7 +179,78 @@ def parse(baml)
   }
 end
 
-#parse(baml)
-lexer(File.read("example.baml")) {|ty, id|
-  puts "#{ty}\t #{id}"
-}
+class Lexeme
+  attr_accessor :ty, :value
+  def inspect
+    if value
+      "#{ty}(#{value.inspect})"
+    else
+      "#{ty}"
+    end
+  end
+end
+
+def parse_statements(lexs)
+  p "parse_statements"
+  loop do
+    cur = lexs.first
+    break unless cur
+    case cur.ty
+    when :nl, :semi then lexs.shift
+    when :id
+      parse_statement(lexs)
+    else break
+    end
+  end
+end
+
+def parse_statement(lexs)
+  p "parse_statement"
+  cur = lexs.first || raise
+
+  case cur.ty
+  when :id 
+    tag = cur.value
+    lexs.shift
+    cur = lexs.first
+
+    if cur.nil?
+      puts "<#{tag} />"
+      return
+    end
+
+    loop do
+      case cur.ty
+      when :open
+        lexs.shift
+        puts "<#{tag}>"
+        parse_statements(lexs)
+        puts "</#{tag}>"
+        raise unless lexs.shift.ty == :close 
+        return
+      when :nl, :semi
+        puts "<#{tag} />"
+        return
+      else
+        raise "invalid type #{ cur.ty }"
+      end
+    end
+  else
+    raise
+  end
+end
+
+def parse(baml)
+  lexemes = []
+  lexer(baml) {|ty, value|
+    l = Lexeme.new
+    l.ty = ty
+    l.value = value
+    lexemes << l
+  }
+
+  p lexemes
+  parse_statements(lexemes)
+end
+
+parse(File.read("simple.baml"))
