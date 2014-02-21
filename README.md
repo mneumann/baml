@@ -390,6 +390,17 @@ In Ruby, this would make it possible to inject either a single attribute or mult
 myattributes = {:id => "abc", :class => "css"}
 ```
 
+But I think in the situation where you want to inject attributes into a tag, the whole tag
+should be rendered programmatically, because injecting attributes would disallow static merging
+of attributes:
+
+```
+div.article class="featured" // => <div class="article featured" />
+```
+
+While when we allo dynamic attribute keys, this is more complicated and has to be done at
+template runtime. Also I think the use case of dynamic attribute keys is too rare to be useful!
+
 ### Macros
 
 Including other baml files into the current:
