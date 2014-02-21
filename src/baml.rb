@@ -33,20 +33,21 @@ class Tag
     @elements = nil 
   end
 
-  def render(level=0)
-    print(" " * level*2)
-    print("<#{@name}")
+  def render(io, level=0)
+    io << (" " * level*2)
+    io << "<#{@name}"
     @attrs.each {|id, arr|
-      print %{ #{id}="#{arr.map(&:to_s).join(' ')}"}
+      io << %{ #{id}="#{arr.map(&:to_s).join(' ')}"}
     }
     if @elements
-      puts ">"
-      @elements.each {|elm| elm.render(level+1)}
-      print(" " * level*2)
-      puts "</#{@name}>"
+      io << ">\n"
+      @elements.each {|elm| elm.render(io, level+1)}
+      io << (" " * level*2)
+      io << "</#{@name}>"
     else
-      puts " />"
+      io << " />"
     end
+    io << "\n"
   end
 end
 
@@ -220,9 +221,9 @@ class Expr
     @lex.value
   end
 
-  def render(level)
-    print(" " * level*2)
-    puts(self.to_s)
+  def render(io, level)
+    io << (" " * level*2)
+    io << self.to_s
   end
 end
 
@@ -231,8 +232,8 @@ class Document
   def initialize(elements)
     @elements = elements
   end
-  def render
-    @elements.each {|elm| elm.render}
+  def render(io)
+    @elements.each {|elm| elm.render(io)}
   end
 end
 
@@ -388,7 +389,9 @@ class Parser
   end
 end
 
-require 'pp'
-parse_tree = Parser.new(File.read("simple.baml")).parse
-pp parse_tree
-parse_tree.render
+if __FILE__ == $0
+  require 'pp'
+  parse_tree = Parser.new(File.read("simple.baml")).parse
+  pp parse_tree
+  parse_tree.render(STDOUT)
+end
