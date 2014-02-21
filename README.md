@@ -4,10 +4,20 @@ A _balanced_, whitespace-insensitive _markup_ _language_ for HTML-templating ins
 
 ## Advantages
 
-* Whitespace insensitive!!!
-* Compact
+* Whitespace _insensitive_!!!
+* Compact markup.
+* Safe: Context-sensitive escaping and interpolation.
 * Editor friendly: Can simply jump to the end of a block.
-* Safe
+
+### Whitespace insensitive
+
+How can Ruby programmers use whitespace sensitive markup??? :)
+
+### Editor friendly
+
+Without special syntax support, to jump to the end of a tag or expression, position
+your cursor on the <code>{</code>-character and press <code>%</code> in <code>vim</code>.
+Code folding should work seamlessly as well (haven't tried).
 
 ## Examples
 
@@ -278,6 +288,153 @@ Newlines are no whitespaces. In some parts they are significant.
   (<code>"id${ article.id }"</code>), the second cannot. A third variant uses the <code>|</code>. It has to 
   start at the beginning of the line and extends till the end of the line, expressions are expanded.
 * HTML comments: Use <code>\\</code>, expands till the end of the line.
+
+## Open Questions
+
+### Multi-line strings
+
+Remove <code>|</code> in favour of a more general multi line string literal. <code>|</code> is bad, because it doesn't 
+let you group text as a unit and operate with filters on the group of text. Instead introduce 
+<code>~{ multiline }</code>, which also allows a terminator to be specified:
+
+```
+div ~{
+  This is a paragraph of text
+}
+
+div ~###{
+  This is a paragraph of text containing a }
+  which does not end the string!
+}###
+
+div ~!{
+  Interpolation is ${ performed }
+}
+```
+
+Parsing of those strings is pretty easy. By default, interpolation of <code>${...}</code> expressions within these
+strings is not performed, but this can be changed with the <code>!</code> modifier. Note that it is not used as terminator after the closing <code>}</code>.
+
+### Filters
+
+This can be used to correctly escape Javascript code:
+
+```
+@javascript "if (this.value > 2)"
+```
+
+This will correctly escape the <code>&gt;</code> and generate <code>if (this.value &amp;gt; 2)</code>.
+
+Depending on the context this will also generate the surround <code>&lt;script&gt;</code> tags.
+
+For multiline javascript:
+
+```
+@javascript ~{
+  function some() {
+    return "Hallo";
+  }
+}
+```
+
+There can be only one filter coming before an expression. Note that the filter might modify the interpolation method used within the following string:
+
+```
+:myvalue: &str
+div onclick=@javascript "alert(${ myvalue })"
+div id="${ myvalue }"
+```
+
+The first will interpolate <code>myvalue</code> as a Javascript string while the second will 
+interpolate it as a HTML attribute (without the surrounding <code>"..."</code>).
+
+### HTML attributes
+
+HTML allows something like:
+```html
+<div id="id" disabled />
+```
+
+I support this in Baml:
+
+```
+div id="id" disabled
+```
+
+But I might want to change it towards always using the <code>attr = value</code> notation,
+plus a special <code>_</code> value which means "ignore":
+
+```
+div id="id" disabled=_
+```
+
+This doesn't look as nice, but is more regular. The question is how frequent those attributes are.
+This is required to allow expressions for attribute names:
+
+```
+div ${myattr}="abc"
+```
+
+which is currently not supported, as a string or expression is always treated as the (inline) body of a tag (and as
+such ends the tag).
+
+Including multiple attributes into a tag is not (yet) supported. But I could think of something like:
+
+```
+div *${myattributes}
+```
+
+In Ruby, this would make it possible to inject either a single attribute or multiple attributes:
+
+```ruby
+myattributes = {:id => "abc", :class => "css"}
+```
+
+### Macros
+
+Including other baml files into the current:
+
+```
+@include('test.baml')
+```
+
+Note that here the string MUST NOT contain interpolation expressions, as interpolation is done at run-time,
+while @include is evaluated at compile time.
+
+If we extend the <code>@filter</code> syntax for arguments like in <code>@pygments(ruby)</code> then we
+can also introduce macros in the language:
+
+```
+@macro(FOOTER, name, year) {
+  div#footer {
+    "Copyright (c) " @expand(year) " by " @expand(name)
+  }
+}
+
+html {
+  body {
+    @expand(FOOTER, "Michael Neumann", "2014")
+  }
+}
+
+```
+
+We would need to make filters aware of tags, i.e. the HTML nodes <code>{ ... }</code> would be passed to
+the macro filter. And also we'd have to allow filters to use arguments optionally.
+Also macros would need to be allowed to come at the beginning of a statement.
+
+The macro definitions would be local to the current node, i.e. local macros can be defined, local to all sub nodes.
+
+This would make for nice code blocks are reusable template code (independent of the language; Ruby or Rust). I now
+think we *DEFINITIVLY* need to include this in Baml!
+
+Macros can also be defined for texts, i.e. exapand to any node or expression.
+
+```
+@macro(AUTHOR) "Michael Neumann"
+
+@macro(PAGE_TITLE) "Title: ${ page.title }"
+```
 
 ## Grammar
 
