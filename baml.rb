@@ -19,6 +19,37 @@ class Lexeme
   end
 end
 
+class Tag
+  attr_accessor :name
+  attr_accessor :elements
+
+  def add_attr(name, value)
+    (@attrs[name] ||= []) << value
+  end
+
+  def initialize(name=nil)
+    @name = name
+    @attrs = {}
+    @elements = nil 
+  end
+
+  def render(level=0)
+    print(" " * level*2)
+    print("<#{@name}")
+    @attrs.each {|id, arr|
+      print %{ #{id}="#{arr.map(&:to_s).join(' ')}"}
+    }
+    if @elements
+      puts ">"
+      @elements.each {|elm| elm.render(level+1)}
+      print(" " * level*2)
+      puts "</#{@name}>"
+    else
+      puts " />"
+    end
+  end
+end
+
 class Lexer
   def initialize(doc)
     @doc = doc
@@ -126,9 +157,8 @@ class Lexer
         end
         yield Lexeme.new(:html, html)
 
-      when '|', ':', "\\", '%', '!'
+      when ':', "\\", '%', '!'
         ty = case ch
-             when '|' then :txt
              when ':' then :param
              when "\\" then :comment
              when "%" then :code_nest
@@ -164,64 +194,201 @@ class Lexer
   end
 end
 
-class Parser
+class AttrValue
+  def initialize(value)
+    @value = value
+  end
 
+  # XXX
+  def to_s
+    case @value
+    when String
+      @value
+    when Expr
+      @value.to_s
+    else
+      raise
+    end
+  end
+end
+
+class Expr
+  def initialize(lex)
+    @lex = lex
+  end
+  def to_s
+    @lex.value
+  end
+
+  def render(level)
+    print(" " * level*2)
+    puts(self.to_s)
+  end
+end
+
+class Document
+  attr_accessor :elements
+  def initialize(elements)
+    @elements = elements
+  end
+  def render
+    @elements.each {|elm| elm.render}
+  end
+end
+
+class Parser
   def initialize(doc)
     @lexs = []
     Lexer.new(doc).each {|lexeme| @lexs << lexeme}
   end
 
   def parse_statements
+    elements = []
     loop do
       cur = @lexs.first
       break unless cur
       case cur.ty
       when :nl, :semi then @lexs.shift
-      when :id
-        parse_statement()
+      when :id, :dot, :hash
+        elements << parse_tag()
       else break
       end
     end
+    elements
   end
 
-  def parse_statement()
+  #
+  # parses .myclass
+  #
+  def parse_css_class
     cur = @lexs.first || raise
-
     case cur.ty
-    when :id 
-      tag = cur.value
+    when :dot
       @lexs.shift
-      cur = @lexs.first
-
-      if cur.nil?
-        puts "<#{tag} />"
-        return
-      end
-
-      loop do
-        case cur.ty
-        when :open
-          @lexs.shift
-          puts "<#{tag}>"
-          parse_statements()
-          puts "</#{tag}>"
-          raise unless @lexs.shift.ty == :close 
-          return
-        when :nl, :semi
-          puts "<#{tag} />"
-          return
-        else
-          raise "invalid type #{ cur.ty }"
-        end
+      cur = @lexs.first || raise(".class expected")
+      case cur.ty
+      when :id
+        @lexs.shift
+        return cur.value
+      else
+        raise "id expected"
       end
     else
       raise
     end
   end
 
+  #
+  # parses #myid
+  #
+  def parse_elem_id
+    cur = @lexs.first || raise
+    case cur.ty
+    when :hash
+      @lexs.shift
+      cur = @lexs.first || raise("#id expected")
+      case cur.ty
+      when :id
+        @lexs.shift
+        return cur.value
+      else
+        raise "id expected"
+      end
+    else
+      raise
+    end
+  end
+
+  # Tries to parse a key=value
+  def try_parse_attr
+    cur = @lexs.first || (return nil)
+
+    case cur.ty
+    when :dot
+      ["class", AttrValue.new(parse_css_class())]
+    when :hash
+      ["id", AttrValue.new(parse_elem_id())]
+    when :id 
+      name = cur.value
+      @lexs.shift
+      cur = @lexs.first || raise("= expected")
+      case cur.ty
+      when :assign
+        @lexs.shift
+        expr = parse_expr()
+        return [name, AttrValue.new(parse_expr())]
+      else
+        raise "= expected"
+      end
+    else
+      return nil
+    end
+  end
+
+  def parse_expr
+    cur = @lexs.first || raise("expr expected")
+    case cur.ty
+    when :dstr, :str, :eval # they all are expressions
+      @lexs.shift
+      return Expr.new(cur)
+    else 
+      raise("expr expected")
+    end
+  end
+
+  # parse a complete tag definition
+  def parse_tag
+    tag = Tag.new
+    cur = @lexs.first || raise
+
+    case cur.ty
+    when :dot
+      tag.name = "div"
+      tag.add_attr("class", parse_css_class())
+    when :hash
+      tag.name = "div"
+      tag.add_attr("id", parse_elem_id())
+    when :id 
+      tag.name = cur.value
+      @lexs.shift
+    else
+      raise
+    end
+
+    # parse all attributes
+    loop do
+      if attr = try_parse_attr()
+        tag.add_attr(*attr)
+      else
+        break
+      end
+    end
+
+    cur = @lexs.first || (return tag)
+
+    case cur.ty
+    when :open
+      @lexs.shift
+      tag.elements = parse_statements()
+      cur = @lexs.shift || raise
+      raise unless cur.ty == :close
+    when :dstr, :str, :eval
+      tag.elements = [parse_expr()]
+    when :nl, :semi
+      # ok
+    else
+      raise "invalid type #{ cur.ty }"
+    end
+
+    return tag
+  end
+
   def parse
-    parse_statements()
+    doc = Document.new(parse_statements())
   end
 end
 
-Parser.new(File.read("simple.baml")).parse
+require 'pp'
+parse_tree = Parser.new(File.read("simple.baml")).parse
+pp parse_tree
+parse_tree.render

@@ -1,8 +1,9 @@
-doctype
 html {
   head {
-    title
-    meta 
-    meta 
+  }
+  body {
+    .article#article1 {
+      p "hallo"
+    }
   }
 }
