@@ -76,9 +76,9 @@ html {
     h1 "Markup examples"
     
     #content {
-      p {
-        | This example shows you how a basic Baml
-        | templating file looks like.
+      p ~{
+        This example shows you how a basic Baml
+        templating file looks like.
       }
     }
     
@@ -107,7 +107,7 @@ html {
     
     div id="footer" {
       ${ render("footer") }
-      | Copyright ${ year } #{ author }
+      "Copyright ${ year } #{ author }"
     }
   }
 }
@@ -143,8 +143,8 @@ produces:
 <div>The title</div>
 ```
 
-Interpolation also appears within the `|`-strings. If you need to emit a not
-interpolated string, simply use a single quote.
+Interpolation also appears within `~{}`-strings. If you need to emit a not
+interpolated string, simply use a single quote, or use a `@raw` modifier.
 
 ### Template parameter types 
 
@@ -285,17 +285,17 @@ Newlines are no whitespaces. In some parts they are significant.
   problems with nesting code in some languages, you can always emulate it with the <code>!</code>.
 * Inline Html: Every line that starts with <code>&lt;</code> gets copied verbatim, useful for including HTML.
 * Strings: Either <code>"..."</code> or <code>'...'</code>. The first variant can include expressions 
-  (<code>"id${ article.id }"</code>), the second cannot. A third variant uses the <code>|</code>. It has to 
-  start at the beginning of the line and extends till the end of the line, expressions are expanded.
+  (<code>"id${ article.id }"</code>), the second cannot. A third variant is useful for multiline strings and looks like
+  <code>~{ ... }</code>. It is also possible to specify a special terminator as in <code>~###{ ....... }###</code>.
+  Everything between <code>~</code> and <code>{</code> determines the terminator which has to repeated after the closing
+  <code>}</code>.
 * HTML comments: Use <code>\\</code>, expands till the end of the line.
 
 ## Open Questions
 
 ### Multi-line strings
 
-Remove <code>|</code> in favour of a more general multi line string literal. <code>|</code> is bad, because it doesn't 
-let you group text as a unit and operate with filters on the group of text. Instead introduce 
-<code>~{ multiline }</code>, which also allows a terminator to be specified:
+Multi-line strings look like this <code>~{ multiline }</code> and also allow a terminator to be specified:
 
 ```
 div ~{
@@ -307,13 +307,13 @@ div ~###{
   which does not end the string!
 }###
 
-div ~!{
-  Interpolation is ${ performed }
+div @raw ~{
+  Interpolation is not ${ performed }
 }
 ```
 
-Parsing of those strings is pretty easy. By default, interpolation of <code>${...}</code> expressions within these
-strings is not performed, but this can be changed with the <code>!</code> modifier. Note that it is not used as terminator after the closing <code>}</code>.
+By default, interpolation of <code>${...}</code> expressions within these
+strings is performed, but this can be changed with the <code>@raw</code> modifier.
 
 ### Filters
 
@@ -434,27 +434,6 @@ Macros can also be defined for texts, i.e. exapand to any node or expression.
 @macro(AUTHOR) "Michael Neumann"
 
 @macro(PAGE_TITLE) "Title: ${ page.title }"
-```
-
-## Grammar
-
-This is the basic grammar of a Baml document (incomplete):
-
-
-```ebnf
-
-stmtend ::= NL | ";"
-
-expr ::= string | "${" code "}"
-
-idname   ::= ("a" .. "z" | "A" .. "Z") ("a" .. "z" | "A" .. "Z" | "-")*
-tagname  ::= id
-attrname ::= id
-
-tag ::= tagname [attribute]* ([expr] stmtend | "{")
-etag ::= "}"
-
-attribute ::= attrname ["=" expr]
 ```
 
 [Baml]: https://github.com/mneumann/batl
