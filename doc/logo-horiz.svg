@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="297mm"
+   height="210mm"
+   id="svg3612"
+   version="1.1"
+   inkscape:version="0.48.4 r"
+   sodipodi:docname="logo-horiz3.svg">
+  <defs
+     id="defs3614">
+    <filter
+       id="filter3391"
+       inkscape:label="HSL Bumps, matte"
+       inkscape:menu="Bumps"
+       inkscape:menu-tooltip="Same as HSL bumps but with a diffuse reflection instead of a specular one"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3393"
+         stdDeviation="0.01"
+         in="SourceGraphic"
+         result="result0" />
+      <feColorMatrix
+         id="feColorMatrix3395"
+         result="fbSourceGraphicAlpha"
+         in="result0"
+         values="1 0 0 -1 0 1 0 1 -1 0 1 0 0 -1 0 -0.8 -1 0 4 -2.5 " />
+      <feGaussianBlur
+         id="feGaussianBlur3397"
+         result="result0"
+         in="fbSourceGraphicAlpha"
+         stdDeviation="0.5" />
+      <feDiffuseLighting
+         id="feDiffuseLighting3399"
+         surfaceScale="15"
+         diffuseConstant="0.40000001"
+         result="result6"
+         lighting-color="#ffffff">
+        <feDistantLight
+           id="feDistantLight3401"
+           azimuth="235"
+           elevation="25" />
+      </feDiffuseLighting>
+      <feComposite
+         id="feComposite3403"
+         in2="SourceGraphic"
+         operator="in"
+         result="result2"
+         in="result6" />
+      <feComposite
+         k4="0"
+         k1="0"
+         id="feComposite3405"
+         in2="SourceGraphic"
+         operator="arithmetic"
+         k2="0.8"
+         k3="0.8" />
+    </filter>
+    <filter
+       id="filter3592"
+       inkscape:label="HSL Bumps, matte"
+       inkscape:menu="Bumps"
+       inkscape:menu-tooltip="Same as HSL bumps but with a diffuse reflection instead of a specular one"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3594"
+         stdDeviation="0.01"
+         in="SourceGraphic"
+         result="result0" />
+      <feColorMatrix
+         id="feColorMatrix3596"
+         result="fbSourceGraphicAlpha"
+         in="result0"
+         values="1 0 0 -1 0 1 0 1 -1 0 1 0 0 -1 0 -0.8 -1 0 4 -2.5 " />
+      <feGaussianBlur
+         id="feGaussianBlur3598"
+         result="result0"
+         in="fbSourceGraphicAlpha"
+         stdDeviation="0.5" />
+      <feDiffuseLighting
+         id="feDiffuseLighting3600"
+         surfaceScale="15"
+         diffuseConstant="0.40000001"
+         result="result6"
+         lighting-color="#ffffff">
+        <feDistantLight
+           id="feDistantLight3602"
+           azimuth="235"
+           elevation="25" />
+      </feDiffuseLighting>
+      <feComposite
+         id="feComposite3604"
+         in2="SourceGraphic"
+         operator="in"
+         result="result2"
+         in="result6" />
+      <feComposite
+         k4="0"
+         k1="0"
+         id="feComposite3606"
+         in2="SourceGraphic"
+         operator="arithmetic"
+         k2="0.8"
+         k3="0.8" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     inkscape:document-units="mm"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.69665275"
+     inkscape:cx="490"
+     inkscape:cy="437.41741"
+     inkscape:current-layer="layer1"
+     id="namedview3616"
+     showgrid="false"
+     inkscape:window-width="1436"
+     inkscape:window-height="926"
+     inkscape:window-x="372"
+     inkscape:window-y="253"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3618">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g3792">
+      <text
+         inkscape:export-ydpi="53.136257"
+         inkscape:export-xdpi="53.136257"
+         inkscape:export-filename="C:\Users\mneumann\Documents\GitHub\baml\doc\logo-horiz.png"
+         transform="matrix(0.46638538,0,0,0.46638538,-89.087629,-1.7435127)"
+         sodipodi:linespacing="125%"
+         id="text3095-5"
+         y="457.68811"
+         x="275.70703"
+         style="font-size:300px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter3391);font-family:KaiTi;-inkscape-font-specification:KaiTi"
+         xml:space="preserve"><tspan
+           y="457.68811"
+           x="275.70703"
+           id="tspan3097-8"
+           sodipodi:role="line">重</tspan></text>
+      <text
+         transform="matrix(0.93379162,0,0,0.93379162,-105.0201,72.574054)"
+         inkscape:export-ydpi="53.136257"
+         inkscape:export-xdpi="53.136257"
+         inkscape:export-filename="C:\Users\mneumann\Documents\GitHub\baml\doc\logo-horiz.png"
+         sodipodi:linespacing="80.000001%"
+         id="text3211-2"
+         y="117.20148"
+         x="303.1109"
+         style="font-size:68.53777313px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:80.00000119%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#aa0000;fill-opacity:1;stroke:none;filter:url(#filter3391);font-family:Nyala;-inkscape-font-specification:Nyala"
+         xml:space="preserve"><tspan
+           id="tspan3021"
+           y="117.20148"
+           x="303.1109"
+           sodipodi:role="line">{Ba<tspan
+   id="tspan3007"
+   style="font-size:68.53777313px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:80.00000119%;writing-mode:lr-tb;text-anchor:start;fill:#000000;font-family:Nyala;-inkscape-font-specification:Nyala">lanced </tspan>M<tspan
+   id="tspan3023"
+   style="font-size:68.53777313px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:80.00000119%;writing-mode:lr-tb;text-anchor:start;fill:#000000;font-family:Nyala;-inkscape-font-specification:Nyala">arkup </tspan>L<tspan
+   id="tspan3025"
+   style="font-size:68.53777313px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:80.00000119%;writing-mode:lr-tb;text-anchor:start;fill:#000000;font-family:Nyala;-inkscape-font-specification:Nyala">anguage</tspan>}</tspan></text>
+    </g>
+  </g>
+</svg>
