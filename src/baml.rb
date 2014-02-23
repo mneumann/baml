@@ -4,7 +4,7 @@
 # An experimental Baml implementation
 #
 
-class Lexeme
+class Token
   attr_accessor :ty, :value
   def initialize(ty, value=nil)
     @ty, @value = ty, value
@@ -76,7 +76,7 @@ class Lexer
           end
         end
 
-        yield Lexeme.new(:id, id)
+        yield Token.new(:id, id)
         next # we already have read the next element!
 
       # A string
@@ -99,7 +99,7 @@ class Lexer
           end
         end
 
-        yield Lexeme.new(:dstr, str)
+        yield Token.new(:dstr, str)
 
       # A single quoted non-interpolated string
       when "'"
@@ -121,7 +121,7 @@ class Lexer
           end
         end
 
-        yield Lexeme.new(:str, str)
+        yield Token.new(:str, str)
 
       # An expansion
       when '$'
@@ -139,7 +139,7 @@ class Lexer
           end
         end
 
-        yield Lexeme.new(:eval, str)
+        yield Token.new(:eval, str)
 
       # A comment
       when '/'
@@ -156,7 +156,7 @@ class Lexer
           break if ch == "\n"
           html << ch 
         end
-        yield Lexeme.new(:html, html)
+        yield Token.new(:html, html)
 
       when ':', "\\", '%', '!'
         ty = case ch
@@ -175,16 +175,16 @@ class Lexer
           txt << ch 
         end
 
-        yield Lexeme.new(ty, html)
+        yield Token.new(ty, html)
 
       when ' ', "\t", "\r"     # ignore whitespace
-      when "\n" then yield Lexeme.new(:nl) # new line
-      when '{'  then yield Lexeme.new(:open)
-      when '}'  then yield Lexeme.new(:close)
-      when ';'  then yield Lexeme.new(:semi)
-      when '.'  then yield Lexeme.new(:dot)
-      when '#'  then yield Lexeme.new(:hash)
-      when '='  then yield Lexeme.new(:assign)
+      when "\n" then yield Token.new(:nl) # new line
+      when '{'  then yield Token.new(:open)
+      when '}'  then yield Token.new(:close)
+      when ';'  then yield Token.new(:semi)
+      when '.'  then yield Token.new(:dot)
+      when '#'  then yield Token.new(:hash)
+      when '='  then yield Token.new(:assign)
 
       else
         raise "invalid character: #{ch}"
