@@ -51,7 +51,7 @@ class Tag
   end
 end
 
-class Lexer
+class Tokenizer
   def initialize(doc)
     @doc = doc
   end
@@ -239,17 +239,17 @@ end
 
 class Parser
   def initialize(doc)
-    @lexs = []
-    Lexer.new(doc).each {|lexeme| @lexs << lexeme}
+    @tokens = []
+    Tokenizer.new(doc).each {|token| @tokens << token}
   end
 
   def parse_statements
     elements = []
     loop do
-      cur = @lexs.first
+      cur = @tokens.first
       break unless cur
       case cur.ty
-      when :nl, :semi then @lexs.shift
+      when :nl, :semi then @tokens.shift
       when :id, :dot, :hash
         elements << parse_tag()
       else break
@@ -262,14 +262,14 @@ class Parser
   # parses .myclass
   #
   def parse_css_class
-    cur = @lexs.first || raise
+    cur = @tokens.first || raise
     case cur.ty
     when :dot
-      @lexs.shift
-      cur = @lexs.first || raise(".class expected")
+      @tokens.shift
+      cur = @tokens.first || raise(".class expected")
       case cur.ty
       when :id
-        @lexs.shift
+        @tokens.shift
         return cur.value
       else
         raise "id expected"
@@ -283,14 +283,14 @@ class Parser
   # parses #myid
   #
   def parse_elem_id
-    cur = @lexs.first || raise
+    cur = @tokens.first || raise
     case cur.ty
     when :hash
-      @lexs.shift
-      cur = @lexs.first || raise("#id expected")
+      @tokens.shift
+      cur = @tokens.first || raise("#id expected")
       case cur.ty
       when :id
-        @lexs.shift
+        @tokens.shift
         return cur.value
       else
         raise "id expected"
@@ -302,7 +302,7 @@ class Parser
 
   # Tries to parse a key=value
   def try_parse_attr
-    cur = @lexs.first || (return nil)
+    cur = @tokens.first || (return nil)
 
     case cur.ty
     when :dot
@@ -311,11 +311,11 @@ class Parser
       ["id", AttrValue.new(parse_elem_id())]
     when :id 
       name = cur.value
-      @lexs.shift
-      cur = @lexs.first || raise("= expected")
+      @tokens.shift
+      cur = @tokens.first || raise("= expected")
       case cur.ty
       when :assign
-        @lexs.shift
+        @tokens.shift
         expr = parse_expr()
         return [name, AttrValue.new(parse_expr())]
       else
@@ -327,10 +327,10 @@ class Parser
   end
 
   def parse_expr
-    cur = @lexs.first || raise("expr expected")
+    cur = @tokens.first || raise("expr expected")
     case cur.ty
     when :dstr, :str, :eval # they all are expressions
-      @lexs.shift
+      @tokens.shift
       return Expr.new(cur)
     else 
       raise("expr expected")
@@ -340,7 +340,7 @@ class Parser
   # parse a complete tag definition
   def parse_tag
     tag = Tag.new
-    cur = @lexs.first || raise
+    cur = @tokens.first || raise
 
     case cur.ty
     when :dot
@@ -351,7 +351,7 @@ class Parser
       tag.add_attr("id", parse_elem_id())
     when :id 
       tag.name = cur.value
-      @lexs.shift
+      @tokens.shift
     else
       raise
     end
@@ -365,13 +365,13 @@ class Parser
       end
     end
 
-    cur = @lexs.first || (return tag)
+    cur = @tokens.first || (return tag)
 
     case cur.ty
     when :open
-      @lexs.shift
+      @tokens.shift
       tag.elements = parse_statements()
-      cur = @lexs.shift || raise
+      cur = @tokens.shift || raise
       raise unless cur.ty == :close
     when :dstr, :str, :eval
       tag.elements = [parse_expr()]
