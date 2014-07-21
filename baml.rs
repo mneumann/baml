@@ -37,14 +37,10 @@ fn is_alnum(ch: u8) -> bool {
   return false;
 }
 
-/*
-fn is_space(ch: u8) -> bool {
-  if ch == (' ' as u8) || ch == ('\t' as u8) || ch == ( 
-  if ch >= ('A' as u8) && ch <= ('Z' as u8) { return true }
+/*fn is_whitespace(ch: u8) -> bool {
+  if ch == (' ' as u8) || ch == ('\t' as u8) || ch == ('\r' as u8) || ch == ('\n' as u8) { return true; }
   return false;
-}
-*/
-
+}*/
 
 struct SliceReader<'a> {
   data: &'a[u8]
@@ -101,22 +97,108 @@ impl<'a> SliceReader<'a> {
   }
 }
 
-// skips whitespace including newlines
+// skips whitespace wihtout newlines
 fn skip_whitespace<'a>(rd: &'a mut SliceReader) {
+  let _ = rd.pop_front_while(|c| 
+    c == (' ' as u8) || c == ('\t' as u8) || c == ('\r' as u8)
+  );
+}
+
+// skips whitespace including newlines
+fn skip_whitespace_and_newline<'a>(rd: &'a mut SliceReader) {
   let _ = rd.pop_front_while(|c| 
     c == (' ' as u8) || c == ('\t' as u8) || c == ('\r' as u8) || c == ('\n' as u8)
   );
 }
 
+
+// assumes that whitespaces have been skipped.
+fn parse_ident<'a>(rd: &'a mut SliceReader) -> Option<&'a str> {
+    match rd.head() {
+        Some(ch) => {
+            //assert!(!is_whitespace(ch));
+            if is_alpha(ch) {
+                let id = rd.pop_front_while(|c| is_alnum(c));
+                let id = from_utf8(id).unwrap();
+                Some(id)
+            } else {
+                None
+            }
+        }
+        None => None
+    }
+}
+
+enum Expr<'a> {
+  String(&'a str),
+  Eval(&'a str)
+}
+
+// assumes that whitespaces have been skipped.
+fn parse_expr<'a>(rd: &'a mut SliceReader) -> Option<Expr<'a>> {
+    match rd.head() {
+        Some(ch) => {
+            //assert!(!is_whitespace(ch));
+            match ch as char {
+                // XXX: Allow '' quoting
+                '"' => {
+                    let _ = rd.pop_front(1);
+                    let string = rd.pop_front_while(|c| c != ('"' as u8));
+                    let string = from_utf8(string).unwrap();
+                    assert!(rd.head() == Some('"' as u8));
+                    let _ = rd.pop_front(1);
+                    Some(String(string))
+                }
+                '$' => {
+                   fail!()
+                }
+                _   => None
+            }
+        }
+        None => None
+    }
+}
+
 fn parse_element<'a>(rd: &'a mut SliceReader) -> Result<Document<'a>, ()> {
-  skip_whitespace(rd);
+  skip_whitespace_and_newline(rd);
 
-  let ch = rd.head();
-  if ch.is_none() { return Err(()); }
+  if rd.is_empty() {
+    return Err(());
+  }
 
-  if is_alpha(ch.unwrap()) {
-    let tag = rd.pop_front_while(|c| is_alnum(c));
-    Ok(SingleTag(from_utf8(tag).unwrap()))
+  let ch = rd.head().unwrap();
+
+  if is_alpha(ch) {
+    let tag = parse_ident(rd).unwrap();
+
+    // parse attributes
+    let mut attributes: ~[&'a str] = ~[];
+
+    loop {
+/*
+      skip_whitespace(rd); // attributes must be on the same line
+      let ident = parse_ident(rd);
+      match ident {
+        Some(param) => {
+          attributes.push(param);
+          skip_whitespace(rd);
+          if rd.head() == Some('=' as u8) {
+            // an expression follows
+            // FIXME: after a `=` we could allow a newline.
+            // then we should also ignore comments
+            skip_whitespace(rd);
+            let expr = parse_expr(rd);
+          }
+        }
+        None => { break }
+      }
+*/
+    }
+
+    println!("{}", attributes);
+
+    return Ok(SingleTag(tag));
+
   }
   else {
     fail!()

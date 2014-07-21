@@ -1,0 +1,39 @@
+HTML escaping within text?
+
+div {
+  "This is text"
+  "This too"
+
+  @raw 'abc def ehj'
+
+  @raw ~{
+    This is also text with <b>being</b> being replaced?
+  }
+
+  @interpolate 'abc ${abc}'
+  @raw "abc ${abc}"
+
+'abcdef' == @raw"abcdef"
+@r @escapehtml ~{
+}
+
+@escapehtml "hallo <b>this is not bold</b>"
+
+div ^{
+  This can contain <b>HTML tags</b>.
+}
+
+div ~{
+  While this cannot <b>. Is it useful?
+}
+
+No, I think we always want to allow HTML in strings, so
+that we can include &amp; and other special characters, no?
+
+Both would esacpe interpolations in the same way.
+
+^"hallo &amp; this can include HTML?" # => @raw "hallo &amp; this can include HTML unescaped"
+"hallo & this can not include HTML" # => @escape "hallo & this can not include HTML"
+
+# @escape is the default
+@raw @raweval @eval
